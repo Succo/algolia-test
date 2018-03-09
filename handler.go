@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -50,7 +51,7 @@ func (I *Index) queryPopularity(w http.ResponseWriter, r *http.Request) {
 	date := params["date"]
 	size, err := strconv.Atoi(r.FormValue("size"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -67,6 +68,7 @@ func (I *Index) queryPopularity(w http.ResponseWriter, r *http.Request) {
 // getKMostPopular return the K most popular queries from a list of queries
 // first it counts the frequencies of all queries with a map
 // then it extract the k biggest frequencies using quick select
+// those k items are sorted using sorting functions from the standard library
 func getKMostPopular(queries []string, size int) popularityResponse {
 	m := make(map[string]int)
 	for _, q := range queries {
@@ -80,7 +82,10 @@ func getKMostPopular(queries []string, size int) popularityResponse {
 		i++
 	}
 
+	size = min(size, len(counted))
+
 	quickSelect(queryItemSlice(counted), size)
+	sort.Sort(queryItemSlice(counted[:size]))
 
 	return popularityResponse{
 		Queries: counted[:size],
@@ -93,3 +98,10 @@ type queryItemSlice []queryItem
 func (q queryItemSlice) Len() int           { return len(q) }
 func (q queryItemSlice) Less(i, j int) bool { return q[i].Count > q[j].Count } // Sign inverted as we sort from biggest to smallest
 func (q queryItemSlice) Swap(i, j int)      { q[i], q[j] = q[j], q[i] }
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
