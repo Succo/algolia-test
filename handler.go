@@ -21,10 +21,11 @@ type popularityResponse struct {
 	Queries []queryItem `json:queries`
 }
 
+// queryCounter is the handler for request of distinct query count
 func (I *Index) queryCounter(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	date := params["date"]
-	resp := countResponse{Count: len(I.getRange(date))}
+	resp := getDistinct(I.getRange(date))
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	err := json.NewEncoder(w).Encode(resp)
@@ -33,6 +34,17 @@ func (I *Index) queryCounter(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getDistinct counts the number of distinct values in a list of queries
+func getDistinct(queries []string) countResponse {
+	m := make(map[string]bool)
+	for _, q := range queries {
+		m[q] = true
+	}
+
+	return countResponse{Count: len(m)}
+}
+
+// queryPopularitty is the handler for request of most popular queries
 func (I *Index) queryPopularity(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	date := params["date"]
@@ -52,6 +64,9 @@ func (I *Index) queryPopularity(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getKMostPopular return the K most popular queries from a list of queries
+// first it counts the frequencies of all queries with a map
+// then it extract the k biggest frequencies using quick select
 func getKMostPopular(queries []string, size int) popularityResponse {
 	m := make(map[string]int)
 	for _, q := range queries {
