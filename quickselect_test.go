@@ -15,7 +15,7 @@ func TestQuickSelect(t *testing.T) {
 	}
 
 	quickSelect(sort.IntSlice(arr), 7)
-	expected := []int{2, 1, 1, 3, 5, 5, 6}
+	expected = []int{2, 1, 1, 3, 5, 5, 6}
 	if !hasSameElement(arr[:7], expected) {
 		t.Fatalf("Invalid elements got %v expected %v", arr[:7], expected)
 	}
