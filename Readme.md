@@ -28,6 +28,7 @@ This is a O(n) operation on the list.
 
 To count the popularity I first use a dictionnary to count the frequencies of each query.
 Then I implemented quickselect as a way to get the K biggest values without sorting all the queries.
+The complexity is O(n log(n)).
 
 I think this implementation works well for the small TSV I have corresponding only to a few days of logs.
 It is an easy index system which I've implemented to get a feeling of the dataset and kept since it worked well for the size of the data I have.
