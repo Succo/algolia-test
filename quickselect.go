@@ -15,6 +15,8 @@ func quickSelect(data sort.Interface, k int) {
 	pivotSelect(data, k, 0, data.Len()-1)
 }
 
+// pivotSelect select the k smallest element between min and max
+// based on https://en.wikipedia.org/wiki/Quickselect
 func pivotSelect(data sort.Interface, k, min, max int) {
 	var pivot int
 
