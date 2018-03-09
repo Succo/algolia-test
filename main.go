@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/valyala/tsvreader"
 )
@@ -14,18 +12,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	r := tsvreader.New(file)
-	var i int
 
+	r := tsvreader.New(file)
+	I := newIndex()
 	for r.Next() {
-		date := r.DateTime()
-		query := r.String()
-		if i%1000 == 0 {
-			fmt.Printf("date=%s, query=%s\n", date.Format(time.UnixDate), query)
-		}
-		i++
+		I.add(r.String(), r.String())
 	}
 	if err := r.Error(); err != nil {
-		fmt.Printf("unexpected error: %s", err)
+		log.Printf("Failed to parse tsv: %s", err)
+		return
 	}
+
+	I.done()
+
+	log.Printf("Done indexing, index size %d\n", I.size)
+	serve(I)
 }

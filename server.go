@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -9,11 +8,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func serve() {
+func serve(I *Index) {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/1/queries/count/{date}", queryCounter).Methods("GET")
-	router.HandleFunc("/1/queries/popular/{date}", queryPopularity).Methods("GET")
+	router.HandleFunc("/1/queries/count/{date}", I.queryCounter).Methods("GET")
+	router.HandleFunc("/1/queries/popular/{date}", I.queryPopularity).Methods("GET")
 
 	srv := &http.Server{
 		Addr:         "0.0.0.0:8080",
@@ -24,14 +23,4 @@ func serve() {
 	}
 
 	log.Fatal(srv.ListenAndServe())
-}
-
-func queryCounter(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	fmt.Fprint(w, params)
-}
-
-func queryPopularity(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	fmt.Fprint(w, params)
 }
