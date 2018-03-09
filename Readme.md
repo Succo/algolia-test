@@ -5,6 +5,14 @@ This is a Rest api to provides data about the reqest made on the hn.algolia.com 
 The data is expected to be in a tsv file in the folder where the application is started.
 I did not include it into the repository as it doesn't belong to me.
 
+The external library I used are:
+
+ * https://github.com/valyala/tsvreader to parse the tsv
+ * https://github.com/gorilla/mux to parse the url and handle routing
+
+The routing element would be easy to get with net/http and the url parsing not too difficult to implement.
+Parsing the tsv using the standard library is also possible albeit a bit slower.
+
 # Implementation
 The challenging part of the application is to process and index in an efficient way the somewhat big tsv file (1623420 lines).
 
