@@ -37,12 +37,12 @@ func (I *Index) queryCounter(w http.ResponseWriter, r *http.Request) {
 
 // getDistinct counts the number of distinct values in a list of queries
 func getDistinct(queries []string) countResponse {
-	m := make(map[string]bool)
+	distinct := make(map[string]bool)
 	for _, q := range queries {
-		m[q] = true
+		distinct[q] = true
 	}
 
-	return countResponse{Count: len(m)}
+	return countResponse{Count: len(distinct)}
 }
 
 // queryPopularitty is the handler for request of most popular queries
@@ -70,14 +70,14 @@ func (I *Index) queryPopularity(w http.ResponseWriter, r *http.Request) {
 // then it extract the k biggest frequencies using quick select
 // those k items are sorted using sorting functions from the standard library
 func getKMostPopular(queries []string, size int) popularityResponse {
-	m := make(map[string]int)
+	freqs := make(map[string]int)
 	for _, q := range queries {
-		m[q] = m[q] + 1
+		freqs[q]++
 	}
 
-	counted := make([]queryItem, len(m))
+	counted := make([]queryItem, len(freqs))
 	var i int
-	for q, freq := range m {
+	for q, freq := range freqs {
 		counted[i] = queryItem{q, freq}
 		i++
 	}
